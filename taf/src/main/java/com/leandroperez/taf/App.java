@@ -1,4 +1,4 @@
-package com.taf;
+package com.leandroperez.taf;
 
 /**
  * Hello world!

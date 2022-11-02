@@ -1,4 +1,4 @@
-package com.taf;
+package com.leandroperez.taf;
 
 //import static org.junit.Assert.assertTrue;
 
