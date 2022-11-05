@@ -42,7 +42,8 @@ public class Session {
     protected String prevBuild = "no";
     Reader reader;
     ClassLoader loader = this.getClass().getClassLoader();
-    URL myUrlUITestProperties = loader.getResource("/taf/src/test/java/com/leandroperez/taf/config/uitest.properties");
+    URL myUrlUITestProperties = loader.getResource("./config/uitest.properties");
+
     String path = myUrlUITestProperties.getPath();
     String decodedPath;
 
