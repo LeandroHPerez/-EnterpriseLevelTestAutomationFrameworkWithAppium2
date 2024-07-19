@@ -1,23 +1,15 @@
 package com.leandroperez.taf.core;
 
-import com.sun.javafx.PlatformUtil;
 import io.appium.java_client.AppiumDriver;
-//import io.appium.java_client.MobileElement;
-
-import io.appium.java_client.*;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
-import io.appium.java_client.remote.AndroidMobileCapabilityType;
-import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
-import io.appium.java_client.service.local.flags.GeneralServerFlag;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-//import org.openqa.selenium.chrome.ChromeOptions;
-//import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -27,7 +19,6 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-import org.apache.commons.io.*;
 
 
 @Setter
@@ -227,9 +218,9 @@ public class Session {
             desiredCapabilities.setCapability("accessKey", customProperties.get("accessKey"));
             desiredCapabilities.setCapability("testName", customProperties.get("testNameAndroid"));
             desiredCapabilities.setCapability("deviceQuery", customProperties.get("deviceQueryAndroid"));
-            desiredCapabilities.setCapability(MobileCapabilityType.APP, customProperties.get("cloudAppAndroid"));
-            desiredCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE, customProperties.get("appPackage"));
-            desiredCapabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, customProperties.get("appActivity"));
+            desiredCapabilities.setCapability("app", customProperties.get("cloudAppAndroid"));
+            desiredCapabilities.setCapability("appPackage", customProperties.get("appPackage"));
+            desiredCapabilities.setCapability("appActivity", customProperties.get("appActivity"));
         }
         if (Boolean.parseBoolean(customProperties.get("isIos"))) {
             desiredCapabilities.setCapability("accessKey", customProperties.get("accessKey"));
@@ -324,9 +315,9 @@ public class Session {
 
     private void executeCommandTxtFile() {
         try {
-            if (PlatformUtil.isWindows()) {
+            if (SystemUtils.IS_OS_WINDOWS) {
                 Runtime.getRuntime().exec("./command.txt");
-            } else if (PlatformUtil.isMac()) {
+            } else if (SystemUtils.IS_OS_MAC) {
                 Runtime.getRuntime().exec("chmod -R 777 " + "./command.txt");
             } else {
                 Runtime.getRuntime().exec("./command.txt");
@@ -342,9 +333,9 @@ public class Session {
     private AppiumDriverLocalService startAppiumServerOnSupportedOs(){
         AppiumDriverLocalService service = null;
         try {
-            if (PlatformUtil.isWindows()) {
+            if (SystemUtils.IS_OS_WINDOWS) {
                 //Runtime.getRuntime().exec("./command.txt");
-            } else if (PlatformUtil.isMac()) {
+            } else if (SystemUtils.IS_OS_MAC) {
                 /*
                 AppiumServiceBuilder serviceBuilder = new AppiumServiceBuilder();
                 serviceBuilder.withIPAddress("http://127.0.0.1"); //Appium_ip_address
