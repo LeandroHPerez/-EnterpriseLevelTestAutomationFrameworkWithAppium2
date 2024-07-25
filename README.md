@@ -74,14 +74,14 @@ Após a instalação, execute o seguinte comando no Terminal:
 ```
 Isso gerará uma string como /Library/Java/JavaVirtualMachines/graalvm-jdk-21.0.4/Contents/Home. Esta é a localização do JDK no seu computador. **Copie este valor**.
 
-Abra seu arquivo .bash_profile (caso exista) em um editor, se preferir digite no terminal:
+Abra seu arquivo .zprofile (caso exista) em um editor, se preferir digite no terminal:
 ```bash
-open ~/.bash_profile
+open ~/.zprofile
 ```
 
-Se o arquivo .bash_profile não existir, crie um via Terminal e após a criação é possível abri-lo com o comando *open ~/.bash_profile*:
+Se o arquivo .zprofile não existir, crie um via Terminal e após a criação é possível abri-lo com o comando *open ~/.zprofile*:
 ```bash
-touch ~/.bash_profile
+touch ~/.zprofile
 ```
 
  e adicione as duas linhas a seguir substituindo o valor variável *JAVA_HOME* pelo que foi copiado anteriormente:
@@ -89,12 +89,12 @@ touch ~/.bash_profile
 export JAVA_HOME="copied-path-to-JDK-directory"
 export PATH=$JAVA_HOME/bin:$PATH
 ```
-Salve as alterações no arquivo .bash_profile.
+Salve as alterações no arquivo .zprofile.
 Abra um terminal e execute para aplicar as mudanças:
  ```bash
-source ~/.bash_profile
+source ~/.zprofile
 ```
-Reinicie o Terminal para obter as novas configurações .bash_profile.
+Reinicie o Terminal para obter as novas configurações .zprofile.
 
 \- ou -
 
@@ -105,27 +105,27 @@ export JAVA_HOME="$(/usr/libexec/java_home -v 21)"
 export PATH=$JAVA_HOME/bin:$PATH
 ```
 
-Salve as alterações no arquivo .bash_profile.
+Salve as alterações no arquivo .zprofile.
 Abra um terminal e execute para aplicar as mudanças:
  ```bash
-source ~/.bash_profile
+source ~/.zprofile
 ```
-Reinicie o Terminal para obter as novas configurações .bash_profile.
+Reinicie o Terminal para obter as novas configurações .zprofile.
 
 \- ou -
 
 **Caso não queira abrir e editar o arquivo manualmente, é possível adicionar as linhas ao arquivo conforme exemplo**:
  ```bash
-echo export "JAVA_HOME=\$(/usr/libexec/java_home -v 21)" >> ~/.bash_profile
-echo export "PATH=$JAVA_HOME/bin:$PATH" >> ~/.bash_profile
+echo export "JAVA_HOME=\$(/usr/libexec/java_home -v 21)" >> ~/.zprofile
+echo export "PATH=$JAVA_HOME/bin:$PATH" >> ~/.zprofile
 ```
 O **parâmetro -v** *em "/usr/libexec/java_home -v 21"* informa a versão específica de qual Java será utilizado, no caso a versão 21. Pode haver mais que uma versão do Java instalada na mesma máquina, assim sendo, é recomendado informar qual versão será utilizada.  
 
 Abra um terminal e execute para aplicar as mudanças:
  ```bash
-source ~/.bash_profile
+source ~/.zprofile
 ```
-Reinicie o Terminal para obter as novas configurações .bash_profile.
+Reinicie o Terminal para obter as novas configurações .zprofile.
 
 Verifique se as variáveis foram corretamente ajustadas, as saídas devem exibir o path correto:
 
@@ -208,9 +208,9 @@ Mude para a aba *SDK Tools* e certifique-se de que as seguintes ferramentas este
 Obs.: Recomendado sempre usar as versões mais recentes das ferramentas.
 
 
-Abra seu arquivo .bash_profile em um editor, se preferir digite no terminal:
+Abra seu arquivo .zprofile em um editor, se preferir digite no terminal:
 ```bash
-open ~/.bash_profile
+open ~/.zprofile
 ```
 
 Adicione as duas linhas a seguir substituindo o valor variável *ANDROID_HOME* pelo que foi copiado anteriormente:
@@ -218,19 +218,19 @@ Adicione as duas linhas a seguir substituindo o valor variável *ANDROID_HOME* p
 export ANDROID_HOME="copied-Android-SDK-location"
 export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 ```
-Salve as alterações no arquivo .bash_profile.
+Salve as alterações no arquivo .zprofile.
 Abra um terminal e execute para aplicar as mudanças:
  ```bash
-source ~/.bash_profile
+source ~/.zprofile
 ```
-Reinicie o Terminal para obter as novas configurações .bash_profile.
+Reinicie o Terminal para obter as novas configurações .zprofile.
 
 \- ou -
 
 **Caso não queria abrir e editar o arquivo manualmente, é possível adicionar as linhas ao arquivo conforme exemplo**:
  ```bash
-echo export "ANDROID_HOME=~/Library/Android/sdk" >> ~/.bash_profile
-echo export "PATH=\$PATH:\$ANDROID_HOME/tools:\$ANDROID_HOME/tools/bin:\$ANDROID_HOME/platform-tools" >> ~/.bash_profile
+echo export "ANDROID_HOME=~/Library/Android/sdk" >> ~/.zprofile
+echo export "PATH=\$PATH:\$ANDROID_HOME/tools:\$ANDROID_HOME/tools/bin:\$ANDROID_HOME/platform-tools" >> ~/.zprofile
 ```
 O **parâmetro ~** recupera o caminho da pasta do usuário.
 
@@ -241,6 +241,16 @@ appium-doctor --dev
 ```
 
 Estando a saída do Appium Doctor sem apontar erros, você acabou de configurar o ambiente.
+
+#### 6 - Instalação e configurações adicionais
+Baixe o pacote de instalação no seguinte site:
+
+Appium inspector
+https://github.com/appium/appium-inspector/releases
+
+https://appium.io/docs/en/2.3/ecosystem/drivers/
+https://appium.io/docs/en/latest/guides/caps/
+
 
 ## Rodando localmente
 
