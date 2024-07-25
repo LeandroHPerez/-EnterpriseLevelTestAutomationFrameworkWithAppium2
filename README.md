@@ -13,7 +13,7 @@ Podem ser escritos testes para:
 - Aplicações **Web** com uso de *Selenium*. (Suporte futuro)
 - Testes de **serviços backend** são suportados com uso de *Rest-assured*. (Suporte futuro)  
 
-As ferramentas que apoiam o framework são gratuítas, têm código aberto e são vastamente utilizadas no mercado.  
+As ferramentas que apoiam o framework são gratuitas, têm código aberto e são vastamente utilizadas no mercado.  
 Consulte a licença de cada ferramenta utilizada para mais detalhes.
 
 
@@ -28,14 +28,6 @@ Créditos ao autor não são necessários, mas são apreciados.
 
 **Obs.**: Testes para iOS só são possíveis quando o ambiente de desenvolvimento é MacOS.
 Não é possível construir nem executar os testes em aplicação para iOS fora do ecossistema da Apple / macOS.
-## Referência
- - [jUnit](https://junit.org/junit5/)
- - [Cucumber](https://cucumber.io/)
- - [Appium](hhttps://appium.io/)
- - [Selenium](https://www.selenium.dev/)
- - [Rest-assured](https://rest-assured.io/)
-
-
 ## Stack utilizada
 
 **Java:** jUnit, Cucumber, Appium, Selenium, Rest-assured
@@ -43,19 +35,22 @@ Não é possível construir nem executar os testes em aplicação para iOS fora 
 
 
 
-## Instalação de ferramentas
+## Instalação de ferramentas e configuração do Ambiente
 
 Para configurar o ambiente para construir e executar testes os seguintes passos podem ser executados:
 
-### MacOS:
+### MacOS 10.5 ou mais novo:
 
 #### 1 - Instalar Homebrew  
-Instale o **Homebrew** (um sistema de gerenciamento de pacotes que facilita a instalação de software em  MacOS).  
+Instale o **Homebrew** (um sistema de gerenciamento de pacotes que facilita a instalação de software em MacOS).  
 Encontre o Homebrew e siga as instruções de instalação neste site:  https://brew.sh
 
-Após a instalação do brew, será **necessário** instalar *Carthage*, um gerenciador de dependência e *Node.js* para termos acesso ao *NPM*
+Após a instalação do brew, será **necessário** instalar *Carthage*, um gerenciador de dependência, *Node.js* para termos acesso ao *NPM*.
+  
+  Obs.: Node.js é um componente essencial para executar o Appium. Appium é construído sobre Node.js, que é um ambiente de execução JavaScript.
+  Node.js vem com npm, um gerenciador de pacotes para JavaScript. O npm permite que você instale, gerencie e distribua facilmente bibliotecas e dependências JavaScript, incluindo o próprio pacote Appium.
 
-abra um Terminal e digite:
+Abra um Terminal e digite:
 
 ```bash
 brew install carthage
@@ -69,28 +64,75 @@ brew install node
 Baixe o **JDK** neste site:
 https://www.oracle.com/java/technologies/javase-downloads.html
 
+O [JDK Development Kit 21](https://www.oracle.com/java/technologies/downloads/?er=221886#jdk21-mac) é a versão utilizada para a construção do Framework, assim sendo, essa versão é a indicada para a instalação. Atente-se para instalar a versão correta para teu sistema operacional.
+
 Execute o instalador baixado e siga as instruções que você verá na tela.
 
 Após a instalação, execute o seguinte comando no Terminal:
 ```bash
 /usr/libexec/java_home --v
 ```
-Isso gerará uma string como /Library/Java/JavaVirtualMachines/jdk1.8.0_171.jdk/Contents/Home. Esta é a localização do JDK no seu computador. **Copie este valor**.
+Isso gerará uma string como /Library/Java/JavaVirtualMachines/graalvm-jdk-21.0.4/Contents/Home. Esta é a localização do JDK no seu computador. **Copie este valor**.
 
-Abra seu arquivo .bash_profile em um editor, se preferir digite no terminal:
+Abra seu arquivo .bash_profile (caso exista) em um editor, se preferir digite no terminal:
 ```bash
 open ~/.bash_profile
 ```
- e adicione as duas linhas a seguir:
+
+Se o arquivo .bash_profile não existir, crie um via Terminal e após a criação é possível abri-lo com o comando *open ~/.bash_profile*:
+```bash
+touch ~/.bash_profile
+```
+
+ e adicione as duas linhas a seguir substituindo o valor variável *JAVA_HOME* pelo que foi copiado anteriormente:
  ```bash
 export JAVA_HOME="copied-path-to-JDK-directory"
 export PATH=$JAVA_HOME/bin:$PATH
 ```
+Salve as alterações no arquivo .bash_profile.
+Abra um terminal e execute para aplicar as mudanças:
+ ```bash
+source ~/.bash_profile
+```
+Reinicie o Terminal para obter as novas configurações .bash_profile.
 
+\- ou -
+
+Alternativamente pode ser feito assim (exportação de uma versão específica).
+Adicione as duas linhas a seguir para automaticamente usar a versão JDK21.
+ ```bash
+export JAVA_HOME="$(/usr/libexec/java_home -v 21)"
+export PATH=$JAVA_HOME/bin:$PATH
+```
 
 Salve as alterações no arquivo .bash_profile.
-
+Abra um terminal e execute para aplicar as mudanças:
+ ```bash
+source ~/.bash_profile
+```
 Reinicie o Terminal para obter as novas configurações .bash_profile.
+
+\- ou -
+
+**Caso não queira abrir e editar o arquivo manualmente, é possível adicionar as linhas ao arquivo conforme exemplo**:
+ ```bash
+echo export "JAVA_HOME=\$(/usr/libexec/java_home -v 21)" >> ~/.bash_profile
+echo export "PATH=$JAVA_HOME/bin:$PATH" >> ~/.bash_profile
+```
+O **parâmetro -v** *em "/usr/libexec/java_home -v 21"* informa a versão específica de qual Java será utilizado, no caso a versão 21. Pode haver mais que uma versão do Java instalada na mesma máquina, assim sendo, é recomendado informar qual versão será utilizada.  
+
+Abra um terminal e execute para aplicar as mudanças:
+ ```bash
+source ~/.bash_profile
+```
+Reinicie o Terminal para obter as novas configurações .bash_profile.
+
+Verifique se as variáveis foram corretamente ajustadas, as saídas devem exibir o path correto:
+
+ ```bash
+echo $JAVA_HOME
+echo $PATH
+```
 
 #### 3 - Instalar Appium:
 Você pode fazer isso de uma das seguintes maneiras:
@@ -105,11 +147,11 @@ https://github.com/appium/appium/releases
 Instale o Appium com npm (**método recomendado**).  
 Execute o seguinte comando na janela do Terminal:
 ```bash
-npm instalar -g appium
+npm install -g appium
 ```
-Isso instalará a última versão do appium.
+Isso instalará a última versão do Appium.
 
-##### **Para instalar um versão específica utilize (recomendado):**
+##### **Para instalar uma versão específica utilize (recomendado):**
 ```bash
 npm install -g appium@version
 ```
@@ -120,19 +162,92 @@ npm install -g appium@2.11
 
 
 #### 4 - Appium Doctor - (opcional, porém altamente recomendado)
-Configurar o ambiente para Appium não é uma tarefa trivial, muitas coisas podem dar errado ou não estarem perfeitamente ajustadas. O AppiumDoctor ajuda a encontrar e ajustar falhas no ambiente.
+Configurar o ambiente para Appium não é uma tarefa trivial, muitas coisas podem dar errado ou não estarem perfeitamente ajustadas. O Appium Doctor ajuda a encontrar e ajustar falhas no ambiente.
 
 ```bash
 npm install @appium/doctor -g
 ```
 
 
+#### 4 - Verificar ambiente - (opcional, porém altamente recomendado)
+Utilize o Appium Doctor (instalado anteriormente) para certificar que o ambiente está pronto e conforme às expectativas e necessidades para a automação de testes utilizando Appium.  
+Execute o comando abaixo no Terminal para procurar falhas no ambiente. 
+
+No caso de falhas encontradas: será necessário ajustar aquela falha apontada e rodar novamente o comando abaixo, até que toda a saída do Appium Doctor indique que não há problemas. Algumas etapas necessárias como a configuração do Android Studio serão feitas nas próximas seções.
+
+```bash
+appium-doctor --dev
+```
+
+#### 5 - Instalação e configuração do Android Studio
+Baixe o pacote de instalação no seguinte site:
+https://developer.android.com/studio/
+
+Execute o instalador e siga as instruções que você verá na tela.
+
+Ao instalar, certifique-se de selecionar o componente *Android Virtual Device*, que são os emuladores de smartphones com sistema Android.
+
+Inicie o Android Studio.
+
+Na caixa de diálogo Bem-vindo, clique no ícone de configurar (três pontos) > SDK Manager. Isso abrirá a caixa de diálogo na aba *SDK Platforms*.   
+Caso já tenha previamente aberto um projeto no Android Studio e a caixa de boas vindas não tenha sido exibida: Acesse via menu "Tools > SDK Manager".
+
+Na guia Plataformas SDK, selecione os SDKs (versão de Android) necessários para teste.
+
+Na parte superior da caixa de diálogo do SDK Manager há uma caixa de texto com o  *Android SDK Location* . Precisaremos deste valor mais tarde.
+*Android SDK Location* terá uma string como */Users/leandroperez/Library/Android/sdk*. Esta é a localização do de todo o Android SDK no seu computador. **Copie este valor**.
+
+Selecione pelo menos um SDK na lista. Ex.: Android 14.0.
+
+Mude para a aba *SDK Tools* e certifique-se de que as seguintes ferramentas estejam selecionadas lá:
+
+* Android SDK Build-tools
+* Android SDK Platform-Tools
+* Android Emulator
+
+Obs.: Recomendado sempre usar as versões mais recentes das ferramentas.
+
+
+Abra seu arquivo .bash_profile em um editor, se preferir digite no terminal:
+```bash
+open ~/.bash_profile
+```
+
+Adicione as duas linhas a seguir substituindo o valor variável *ANDROID_HOME* pelo que foi copiado anteriormente:
+ ```bash
+export ANDROID_HOME="copied-Android-SDK-location"
+export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+```
+Salve as alterações no arquivo .bash_profile.
+Abra um terminal e execute para aplicar as mudanças:
+ ```bash
+source ~/.bash_profile
+```
+Reinicie o Terminal para obter as novas configurações .bash_profile.
+
+\- ou -
+
+**Caso não queria abrir e editar o arquivo manualmente, é possível adicionar as linhas ao arquivo conforme exemplo**:
+ ```bash
+echo export "ANDROID_HOME=~/Library/Android/sdk" >> ~/.bash_profile
+echo export "PATH=\$PATH:\$ANDROID_HOME/tools:\$ANDROID_HOME/tools/bin:\$ANDROID_HOME/platform-tools" >> ~/.bash_profile
+```
+O **parâmetro ~** recupera o caminho da pasta do usuário.
+
+Reexecute a etapa *4 - Verificar ambiente* para certificar que tudo está ok e faça os ajustes se necessário.
+
+```bash
+appium-doctor --dev
+```
+
+Estando a saída do Appium Doctor sem apontar erros, você acabou de configurar o ambiente.
+
 ## Rodando localmente
 
 Clone o projeto
 
 ```bash
-  git clone hhttps://github.com/LeandroHPerez/-EnterpriseLevelTestAutomationFrameworkWithAppium2
+  git clone https://github.com/LeandroHPerez/-EnterpriseLevelTestAutomationFrameworkWithAppium2
 ```
 
 Entre no diretório do projeto
@@ -146,6 +261,14 @@ Verifique a seção de Instalação e informações adicionais no arquivo README
 ```bash
   README.md
 ```
+
+
+## Referência
+ - [jUnit](https://junit.org/junit5/)
+ - [Cucumber](https://cucumber.io/)
+ - [Appium](https://appium.io/)
+ - [Selenium](https://www.selenium.dev/)
+ - [Rest-assured](https://rest-assured.io/)
 
 
 ## Licença
