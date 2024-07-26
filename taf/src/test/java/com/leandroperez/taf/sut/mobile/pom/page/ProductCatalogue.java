@@ -1,8 +1,7 @@
-package com.leandroperez.taf.pageobjects.mobile.android;
+package com.leandroperez.taf.sut.mobile.pom.page;
 
 import java.util.List;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 

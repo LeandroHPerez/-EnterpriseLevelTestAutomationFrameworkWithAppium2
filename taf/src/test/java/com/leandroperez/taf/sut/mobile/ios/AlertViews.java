@@ -1,12 +1,10 @@
-package com.leandroperez.taf.pageobjects.mobile.ios;
+package com.leandroperez.taf.sut.mobile.ios;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 
 import com.leandroperez.taf.core.mobile.IOSActions;
 
-import io.appium.java_client.AppiumBy;
-import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import io.appium.java_client.pagefactory.iOSXCUITFindBy;
