@@ -14,6 +14,8 @@ import com.leandroperez.taf.core.Session;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.ios.options.XCUITestOptions;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 
 public class IOSBaseTest extends AppiumUtils{
@@ -21,8 +23,8 @@ public class IOSBaseTest extends AppiumUtils{
 	public IOSDriver driver;
 	public AppiumDriverLocalService service;
 	public HomePage homePage;
-	
-	@BeforeClass
+
+	@BeforeAll
 	public void ConfigureAppium() throws IOException
 	{
 		Session session = new Session();
@@ -57,7 +59,7 @@ public class IOSBaseTest extends AppiumUtils{
 
 	
 	
-	@AfterClass
+	@AfterAll
 	public void tearDown()
 	{
 		driver.quit();
