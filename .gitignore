@@ -22,15 +22,17 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-
 ## Contents underneath target folder at any level of the project structue
 **/target/*
 
 #Jetbains IDE configuration files
 .idea/
 
-
 #Mac Finder file
 .DS_Store
+
+#Allure teste results
+taf/allure-results/
+
 
 
