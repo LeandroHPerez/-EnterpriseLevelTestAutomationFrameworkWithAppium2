@@ -1,7 +1,5 @@
 package com.leandroperez.taf.core;
 
-import com.leandroperez.taf.core.enumerator.PlatformInTest;
-import com.leandroperez.taf.core.enumerator.TestExecutionStrategy;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
@@ -16,11 +14,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -28,21 +23,23 @@ import java.util.concurrent.TimeUnit;
 
 @Setter
 @Slf4j
-public class Session {
-    private String PROJECT_ROOT_PATH = System.getProperty("user.dir");
-    private String UITEST_PROPERTIES_FILE_PATH = PROJECT_ROOT_PATH + "/src/test/java/com/leandroperez/taf/config/uitest.properties";
-    Path uiTestPropertiesPath = Paths.get(UITEST_PROPERTIES_FILE_PATH);
+public class SessionOld {
     private WebDriver webDriver;
     private AppiumDriver appiumDriver;
     private AndroidDriver androidDriver;
     private IOSDriver iosDriver;
+    private Boolean isMobile;
     private HashMap<String, String> customProperties = new HashMap<>();
     protected String prevBuild = "no";
     Reader reader;
+    ClassLoader loader = this.getClass().getClassLoader();
+    URL myUrlUITestProperties = loader.getResource("./config/uitest.properties");
+
+    String path = myUrlUITestProperties.getPath();
     String decodedPath;
     {
         try {
-            decodedPath = URLDecoder.decode(uiTestPropertiesPath.toString(), "UTF-8");
+            decodedPath = URLDecoder.decode(path, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -60,118 +57,29 @@ public class Session {
         prop.forEach((k, v) -> customProperties.put(k.toString(), v.toString()));
     }
 
-    public void startSession(PlatformInTest platformInTest, TestExecutionStrategy testExecutionStrategy) throws Exception {
-        if (testExecutionStrategy == null) {
-            throw new RuntimeException("Session configuration error, testExecutionStrategy is null");
-        }
-        if (platformInTest == null) {
-            throw new RuntimeException("Session configuration error, platformInTest is null");
-        }
-
-        switch (testExecutionStrategy) {
-            case LOCAL:
-                System.out.println("Starting LOCAL session");
-                startLocalSession(platformInTest);
-                break;
-            case GRID:
-                System.out.println("Starting GRID session");
-                startGridSession();
-                break;
-            case REMOTE:
-                System.out.println("Starting REMOTE session");
-                startRemoteSession(getURLFromConfiguratedLocalMobileHubAddressProperty(), getConfiguratedMobileDesiredCapabilities(), platformInTest);
-                break;
+    public void startSession() throws Exception {
+        if (customProperties.get("executionTarget").isEmpty()) {
+            throw new RuntimeException("Session configuration error, executionTarget is empty");
+        } else if (customProperties.get("executionTarget").equals("LOCAL")) {
+            startLocalSession();
+        } else if (customProperties.get("executionTarget").equals("GRID")) {
+            startGridSession();
+        } else if (customProperties.get("executionTarget").equals("EXPERITEST")) {
+            startExperiTestSession();
         }
     }
 
-    private void startDefaultLocalSession(PlatformInTest platformInTest) {
-        try {
-            if (platformInTest == PlatformInTest.WEB) {
-                //todo
-            } else if (platformInTest == PlatformInTest.ANDROID) {
-                executeRuntimeCommandTxtFile();
-                AppiumDriverLocalService service = getAppiumDriverDefaultLocalService();
-                service.start();
-                this.androidDriver = new AndroidDriver(service, getConfiguratedMobileDesiredCapabilities());
-                this.appiumDriver = this.androidDriver;
-            } else if (platformInTest == PlatformInTest.IOS) {
-                executeRuntimeCommandTxtFile();
-                AppiumDriverLocalService service = getAppiumDriverDefaultLocalService();
-                this.iosDriver = new IOSDriver(service, getConfiguratedMobileDesiredCapabilities());
-                this.appiumDriver = this.iosDriver;
-            } else {
-                throw new IllegalArgumentException("Error: platformInTest is invalid");
-            }
-        } catch (Exception e) {
-            System.out.println(this.getClass().getEnclosingMethod().getDeclaringClass().getEnclosingMethod().getName()
-                    + "\n" + "Error: " + e);
-        }
+    private void startLocalSession() throws IOException {
+        StringBuilder urlString = new StringBuilder();
+        urlString.append(customProperties.get("hubAddress"));
+        URL url = new URL(urlString.toString());
+        DesiredCapabilities desiredCapabilities = this.getDesiredCapabilities();
+        this.startRemoteSession(url, desiredCapabilities);
     }
 
-    private void startLocalSession(PlatformInTest platformInTest) {
-        if (platformInTest == null) {
-            throw new RuntimeException("Session configuration error, platformInTest is null");
-        }
-        try {
-            StringBuilder urlString = new StringBuilder();
-            switch (platformInTest) {
-                case WEB:
-                    urlString.append(customProperties.get("localWebHubAddress"));
-                    break;
-                case ANDROID:
-                    executeRuntimeCommandTxtFile();
-                    AppiumDriverLocalService serviceAndroid = getAppiumDriverDefaultLocalService();
-                    serviceAndroid.start();
-                    this.androidDriver = new AndroidDriver(serviceAndroid, getConfiguratedMobileDesiredCapabilities());
-                    this.appiumDriver = this.androidDriver;
-                    break;
-                case IOS:
-                    executeRuntimeCommandTxtFile();
-                    AppiumDriverLocalService serviceIOS = getAppiumDriverDefaultLocalService();
-                    serviceIOS.start();
-                    this.iosDriver = new IOSDriver(serviceIOS, getConfiguratedMobileDesiredCapabilities());
-                    this.appiumDriver = this.iosDriver;
-                    break;
-            }
-        } catch (Exception e) {
-            System.out.println(this.getClass().getEnclosingMethod().getDeclaringClass().getEnclosingMethod().getName()
-                    + "\n" + "Error: " + e);
-        }
-    }
-
-
-    private void startRemoteSession(URL url, final DesiredCapabilities desiredCapabilities, PlatformInTest platformInTest) {
-        if (url == null || desiredCapabilities == null || platformInTest == null) {
-            throw new RuntimeException("Session configuration error.");
-        }
-        try {
-            StringBuilder urlString = new StringBuilder();
-            switch (platformInTest) {
-                case WEB:
-                    urlString.append(customProperties.get("localWebHubAddress"));
-                    RemoteWebDriver remoteWebDriver = new RemoteWebDriver(url, desiredCapabilities);
-                    this.webDriver = remoteWebDriver;
-                    this.webDriver.manage().window().maximize();
-                    break;
-                case ANDROID:
-                    this.androidDriver = new AndroidDriver(url, desiredCapabilities);
-                    this.appiumDriver = this.androidDriver;
-                    break;
-                case IOS:
-                    this.iosDriver = new IOSDriver(url, desiredCapabilities);
-                    this.appiumDriver = this.iosDriver;
-                    break;
-            }
-        } catch (Exception e) {
-            System.out.println(this.getClass().getEnclosingMethod().getDeclaringClass().getEnclosingMethod().getName()
-                    + "\n" + "Error: " + e);
-        }
-
-
-
-
+    private void startRemoteSession(URL url, final DesiredCapabilities desiredCapabilities) throws IOException {
         if (Boolean.parseBoolean(customProperties.get("isMobile"))) {
-            if (platformInTest == PlatformInTest.ANDROID) {
+            if (Boolean.parseBoolean(customProperties.get("isAndroid"))) {
                 if (customProperties.get("useRemoteServiceUrlForAndroid").equals("yes")) {
                     this.androidDriver = new AndroidDriver(url, desiredCapabilities);
                     this.appiumDriver = this.androidDriver;
@@ -183,7 +91,7 @@ public class Session {
                     this.androidDriver = new AndroidDriver(service, desiredCapabilities);
                     this.appiumDriver = this.androidDriver;
                 }
-            } else if (platformInTest == PlatformInTest.IOS) {
+            } else if (Boolean.parseBoolean(customProperties.get("isIos"))) {
                 if (customProperties.get("useRemoteServiceUrlForiOS").equals("yes")) {
                     this.iosDriver = new IOSDriver(url, desiredCapabilities);
                     this.appiumDriver = this.iosDriver;
@@ -191,7 +99,35 @@ public class Session {
                     executeRuntimeCommandTxtFile();
                     AppiumDriverLocalService service = getAppiumDriverDefaultLocalService();
 
+                    /*
+                    //Build the Appium service
+                    AppiumServiceBuilder builder = new AppiumServiceBuilder();
+                    builder.withIPAddress("127.0.0.1");
+                    //127.0.0.1 is the  localhost normally resolves to the IPv4  127.0.0.1
+                    builder.usingPort(4723); //Appium default port
+                    builder.withCapabilities(desiredCapabilities);
+                    builder.withArgument(GeneralServerFlag.SESSION_OVERRIDE);
+                    builder.withArgument(GeneralServerFlag.LOG_LEVEL,"error");
 
+                    //Start the server with the builder
+                    AppiumDriverLocalService service = AppiumDriverLocalService.buildService(builder);
+                    //service.start();
+                    System.out.println("Appium Server Started via Java");
+
+
+
+                    //AppiumDriverLocalService service = new AppiumServiceBuilder().withLogFile(testLogFile).build();
+
+                    service = new AppiumServiceBuilder()
+                        .usingPort(4723)
+                            .
+                            .withCapabilities(desiredCapabilities)
+                            .build();
+
+                     */
+
+
+                    //service.start();
                     this.iosDriver = new IOSDriver(service, desiredCapabilities);
                     this.appiumDriver = this.iosDriver;
                 }
@@ -204,27 +140,13 @@ public class Session {
         }
     }
 
-    private URL getURLFromConfiguratedLocalMobileHubAddressProperty() {
-        StringBuilder urlString = new StringBuilder();
-        URL url = null;
-        try {
-            urlString.append(customProperties.get("localMobileHubAddress"));
-            url = new URL(urlString.toString());
-        } catch (MalformedURLException mue) {
-            System.out.println(this.getClass().getEnclosingMethod().getDeclaringClass().getEnclosingMethod().getName()
-                    + "\n" + "Error: " + mue);
-        }
-        return url;
-    }
-
-
     private static AppiumDriverLocalService getAppiumDriverDefaultLocalService() {
         AppiumDriverLocalService service = AppiumDriverLocalService.buildDefaultService();
         return service;
     }
 
     private static AppiumDriverLocalService getAppiumDriverDefaultLocalServiceWithLog(File testLogFilePath) {
-        if (testLogFilePath == null)
+        if(testLogFilePath == null)
             testLogFilePath = new File("./log/appium_log.txt");
         AppiumDriverLocalService service = new AppiumServiceBuilder().withLogFile(testLogFilePath).build();
         service.start();
@@ -235,9 +157,15 @@ public class Session {
         /* TODO implement startGridSession */
     }
 
+    private void startExperiTestSession() throws IOException {
+        StringBuilder urlString = new StringBuilder();
+        urlString.append(customProperties.get("seeTestWdHub"));
+        URL url = new URL(urlString.toString());
+        DesiredCapabilities desiredCapabilities = this.getDesiredCapabilitiesSeeTest();
+        this.startRemoteSession(url, desiredCapabilities);
+    }
 
-
-    public DesiredCapabilities getConfiguratedMobileDesiredCapabilities() {
+    public DesiredCapabilities getDesiredCapabilities() {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         if (Boolean.parseBoolean(customProperties.get("isAndroid"))) {
             desiredCapabilities.setCapability("platformName", customProperties.get("platformName"));
@@ -317,19 +245,11 @@ public class Session {
     }
 
     public Boolean isMobile() {
-        return (appiumDriver != null || androidDriver != null || iosDriver != null);
+        return isMobile;
     }
 
-    public Boolean isAndroid() {
-        return (androidDriver != null);
-    }
-
-    public Boolean isIOS() {
-        return (iosDriver != null);
-    }
-
-    public Boolean isWeb() {
-        return (webDriver != null);
+    private void setMobile(Boolean isMobile) {
+        this.isMobile = isMobile;
     }
 
     public AppiumDriver getAppiumDriver() {
@@ -354,49 +274,23 @@ public class Session {
     }
 
     public WebDriver getWebDriver() {
+        this.setMobile(Boolean.parseBoolean(customProperties.get("isMobile")));
+        if (!isMobile()) {
+            getWebDriver().manage().timeouts().pageLoadTimeout(30L, TimeUnit.SECONDS);
+        }
         return this.webDriver;
     }
-
-    public WebDriver setWebDriverTimeout(long time, TimeUnit timeUnit) {
-        if(webDriver != null)
-            getWebDriver().manage().timeouts().pageLoadTimeout(time, timeUnit);
-        return this.webDriver;
+/*
+    protected ChromeOptions getChromeOptions() {
+        ChromeOptions chromeOptions = new ChromeOptions();
+        return chromeOptions;
     }
 
-
-
-    public void quitWebDriverSession() {
-        if (webDriver != null) {
-            webDriver.quit();
-            webDriver = null;
-        }
+    protected FirefoxOptions getFireFoxOptions() {
+        FirefoxOptions firefoxOptions = new FirefoxOptions();
+        return firefoxOptions;
     }
-
-    public void quitMobileDriverSession() {
-        if (appiumDriver != null) {
-            appiumDriver.quit();
-            androidDriver = null;
-            iosDriver = null;
-        }
-    }
-
-
-
-
-    /*
-        protected ChromeOptions getChromeOptions() {
-            ChromeOptions chromeOptions = new ChromeOptions();
-            return chromeOptions;
-        }
-
-        protected FirefoxOptions getFireFoxOptions() {
-            FirefoxOptions firefoxOptions = new FirefoxOptions();
-            return firefoxOptions;
-        }
-    */
-
-
-
+*/
     public HashMap<String, String> getCustomProperties() {
         return customProperties;
     }
@@ -443,7 +337,8 @@ public class Session {
     }
 
 
-    private AppiumDriverLocalService startAppiumServerOnSupportedOsWithCustomBuilder() {
+
+    private AppiumDriverLocalService startAppiumServerOnSupportedOsWithCustomBuilder(){
         AppiumDriverLocalService service = null;
         try {
             if (SystemUtils.IS_OS_WINDOWS) {
@@ -467,6 +362,8 @@ public class Session {
                 service.isRunning();
                 //service.start();
                 */
+
+
 
 
                 String nodePath = "/usr/local/bin/node";

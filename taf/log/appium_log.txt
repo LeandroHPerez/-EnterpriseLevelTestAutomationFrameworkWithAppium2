@@ -1,0 +1,1 @@
+This log is generated when getAppiumDriverDefaultLocalServiceWithLog() is called.
