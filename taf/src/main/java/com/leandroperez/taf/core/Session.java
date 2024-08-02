@@ -36,6 +36,7 @@ public class Session {
     private AppiumDriver appiumDriver;
     private AndroidDriver androidDriver;
     private IOSDriver iosDriver;
+    PlatformInTest currentPlatformInTest = null;
     private HashMap<String, String> customProperties = new HashMap<>();
     protected String prevBuild = "no";
     Reader reader;
@@ -57,7 +58,20 @@ public class Session {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        prop.forEach((k, v) -> customProperties.put(k.toString(), v.toString()));
+        loadOnlyCustomPropertiesNotNoneAndNotNull(prop);
+    }
+
+    public void loadAllCustomProperties(Properties propLoaded){
+        propLoaded.forEach((k, v) -> customProperties.put(k.toString(), v.toString()));
+    }
+
+    public void loadOnlyCustomPropertiesNotNoneAndNotNull(Properties propLoaded){
+        propLoaded.forEach((k, v) -> {
+            if (v != null && !"none".equalsIgnoreCase(v.toString()) && !"null".equalsIgnoreCase(v.toString())) {
+                customProperties.put(k.toString(), v.toString());
+                System.out.println("key: " + k.toString() + "value: " + v.toString());
+            }
+        });
     }
 
     public void startSession(PlatformInTest platformInTest, TestExecutionStrategy testExecutionStrategy) throws Exception {
@@ -67,6 +81,8 @@ public class Session {
         if (platformInTest == null) {
             throw new RuntimeException("Session configuration error, platformInTest is null");
         }
+
+        currentPlatformInTest = platformInTest;
 
         switch (testExecutionStrategy) {
             case LOCAL:
@@ -235,9 +251,108 @@ public class Session {
         /* TODO implement startGridSession */
     }
 
+ private boolean isNotNullOrNoneValue(String string){
+     return !(string != null && !"none".equalsIgnoreCase(string));
+ }
+
 
 
     public DesiredCapabilities getConfiguratedMobileDesiredCapabilities() {
+        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+        if (isAndroid()) {
+            String platformName = customProperties.get("platformName");
+            String automationName = customProperties.get("automationName");
+            String platformVersion = customProperties.get("platformVersion");
+            String deviceName = customProperties.get("deviceName");
+            String androidNoReset = customProperties.get("androidNoReset");
+            String appPackage = customProperties.get("appPackage");
+            String appActivity = customProperties.get("appActivity");
+
+            if (isNotNullOrNoneValue(platformName)){
+                desiredCapabilities.setCapability("platformName", platformName);
+            }
+
+            if (isNotNullOrNoneValue(platformName)){
+                desiredCapabilities.setCapability("appium:automationName", automationName);
+            }
+
+            if (isNotNullOrNoneValue(platformName)){
+                desiredCapabilities.setCapability("appium:platformVersion", platformVersion);
+            }
+
+            if (isNotNullOrNoneValue(platformName)){
+                desiredCapabilities.setCapability("appium:deviceName", deviceName);
+            }
+
+            if (isNotNullOrNoneValue(platformName)){
+                desiredCapabilities.setCapability("appium:noReset", androidNoReset);
+            }
+
+            if (isNotNullOrNoneValue(platformName)){
+                desiredCapabilities.setCapability("appium:appPackage", appPackage);
+            }
+
+            if (isNotNullOrNoneValue(platformName)){
+                desiredCapabilities.setCapability("appium:appActivity", appActivity);
+            }
+
+
+
+/*
+            desiredCapabilities.setCapability("platformName", customProperties.get("platformName"));
+            desiredCapabilities.setCapability("appium:automationName", customProperties.get("automationName"));
+            desiredCapabilities.setCapability("appium:platformVersion", customProperties.get("platformVersion"));
+            desiredCapabilities.setCapability("appium:deviceName", customProperties.get("deviceName"));
+            desiredCapabilities.setCapability("appium:noReset", customProperties.get("androidNoReset"));
+            desiredCapabilities.setCapability("appium:appPackage", customProperties.get("appPackage"));
+            desiredCapabilities.setCapability("appium:appActivity", customProperties.get("appActivity"));
+
+            */
+
+        }
+        if (isIOS()) {
+            if (customProperties.get("localization").equals("yes")) {
+                System.out.println("localization value " + customProperties.get("localization"));
+                System.out.println("language value " + customProperties.get("appLanguage"));
+                desiredCapabilities.setCapability("platformName", customProperties.get("iosPlatformName"));
+                desiredCapabilities.setCapability("platformVersion", customProperties.get("iosPlatformVersion"));
+                desiredCapabilities.setCapability("deviceName", customProperties.get("iosDeviceName"));
+                desiredCapabilities.setCapability("app", customProperties.get("iosApp"));
+                desiredCapabilities.setCapability("noReset", customProperties.get("iosNoReset"));
+                desiredCapabilities.setCapability("automationName", customProperties.get("iosAutomationName"));
+                desiredCapabilities.setCapability("udid", customProperties.get("iosUdid"));
+                desiredCapabilities.setCapability("xcodeOrgId", customProperties.get("iosXcodeOrgId"));
+                desiredCapabilities.setCapability("xcodeSigningId", customProperties.get("iosXcodeSigningId"));
+                desiredCapabilities.setCapability("language", customProperties.get("appLanguage"));
+                desiredCapabilities.setCapability("locale", customProperties.get("appLanguage"));
+            } else {
+                desiredCapabilities.setCapability("platformName", customProperties.get("iosPlatformName"));
+                desiredCapabilities.setCapability("platformVersion", customProperties.get("iosPlatformVersion"));
+                desiredCapabilities.setCapability("deviceName", customProperties.get("iosDeviceName"));
+                desiredCapabilities.setCapability("app", customProperties.get("iosApp"));
+                desiredCapabilities.setCapability("noReset", customProperties.get("iosNoReset"));
+                desiredCapabilities.setCapability("automationName", customProperties.get("iosAutomationName"));
+                desiredCapabilities.setCapability("udid", customProperties.get("iosUdid"));
+                desiredCapabilities.setCapability("xcodeOrgId", customProperties.get("iosXcodeOrgId"));
+                desiredCapabilities.setCapability("xcodeSigningId", customProperties.get("iosXcodeSigningId"));
+                desiredCapabilities.setCapability("showIOSLog", customProperties.get("showIOSLog"));
+            }
+        }
+
+        if (customProperties.get("browserName").equals("chrome")) {
+            //ChromeOptions chromeOptions = getChromeOptions();
+            //desiredCapabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+        }
+        if (customProperties.get("browserName").equals("firefox")) {
+            //FirefoxOptions firefoxOptions = getFireFoxOptions();
+            //desiredCapabilities.setCapability(ChromeOptions.CAPABILITY, firefoxOptions);
+        }
+        return desiredCapabilities;
+    }
+
+
+
+    public DesiredCapabilities getConfiguratedMobileDesiredCapabilitiesOLD() {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         if (Boolean.parseBoolean(customProperties.get("isAndroid"))) {
             desiredCapabilities.setCapability("platformName", customProperties.get("platformName"));
@@ -321,15 +436,15 @@ public class Session {
     }
 
     public Boolean isAndroid() {
-        return (androidDriver != null);
+        return (currentPlatformInTest != null && currentPlatformInTest == PlatformInTest.ANDROID);
     }
 
     public Boolean isIOS() {
-        return (iosDriver != null);
+        return (currentPlatformInTest != null && currentPlatformInTest == PlatformInTest.IOS);
     }
 
     public Boolean isWeb() {
-        return (webDriver != null);
+        return (currentPlatformInTest != null && currentPlatformInTest == PlatformInTest.WEB);
     }
 
     public AppiumDriver getAppiumDriver() {
