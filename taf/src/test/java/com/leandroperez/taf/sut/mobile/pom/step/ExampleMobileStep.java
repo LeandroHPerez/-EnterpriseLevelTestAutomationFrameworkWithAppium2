@@ -25,23 +25,27 @@ public class ExampleMobileStep {
 
     @Before
     public void initSession() {
-        System.out.println("aaaaaa aaaaaaaa aaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaaaaaaa");
+        System.out.println("initSession()");
         try{
+            System.out.println("initiating Session");
             session.startSession(PlatformInTest.ANDROID, TestExecutionStrategy.LOCAL);
             exampleMobilePage = new ExampleMobilePage();
         } catch (Exception e) {
-            System.out.println("initSession()" + "\n" + "Error: " + e);
+            System.out.println("initSession(): " + "Error: " + e);
 
         }
     }
 
     @After
     public void closeSession() {
-        System.out.println("cccccccc aaaaaaaa aaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaaaaaaa");
+        System.out.println("closeSession()");
         try{
-            session.closeSession();
+            if(session != null) {
+                System.out.println("closing Session");
+                session.closeSession();
+            }
         } catch (Exception e){
-            System.out.println("closeSession()" + "\n" + "Error: " + e);
+            System.out.println("closeSession(): " + "Error: " + e);
         }
     }
 }

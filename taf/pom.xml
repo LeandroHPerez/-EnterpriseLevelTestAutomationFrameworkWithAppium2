@@ -24,7 +24,7 @@
         <slf4j.version>2.0.13</slf4j.version>
         <log4j-core.version>2.23.1</log4j-core.version>
         <aspectj.version>1.9.21</aspectj.version>
-        <appium.version>8.6.0</appium.version>
+        <appium.version>9.3.0</appium.version>
         <selenium.version>4.23.0</selenium.version>
         <apache.poi.version>5.3.0</apache.poi.version>
         <extentreports.version>5.1.2</extentreports.version>
@@ -76,6 +76,11 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-grid</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-remote-driver</artifactId>
             <version>${selenium.version}</version>
         </dependency>
 

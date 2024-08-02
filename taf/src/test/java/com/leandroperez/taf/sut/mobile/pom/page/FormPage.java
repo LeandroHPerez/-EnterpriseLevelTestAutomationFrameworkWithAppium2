@@ -1,5 +1,6 @@
 package com.leandroperez.taf.sut.mobile.pom.page;
 
+import com.google.common.collect.ImmutableMap;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
@@ -53,8 +54,12 @@ public class FormPage extends AndroidActions{
 	
 	public void setActivity()
 	{
-		Activity activity = new Activity("com.androidsample.generalstore", "com.androidsample.generalstore.MainActivity");
-		driver.startActivity(activity);
+		//Activity activity = new Activity("com.androidsample.generalstore", "com.androidsample.generalstore.MainActivity");
+		//driver.startActivity(activity);
+
+		driver.executeScript("mobile: startActivity",
+				ImmutableMap.of( "action", "android.settings.APPLICATION_DETAILS_SETTINGS",
+						"uri","package:com.android.chrome"));
 	}
 	
 	public void setGender(String gender)

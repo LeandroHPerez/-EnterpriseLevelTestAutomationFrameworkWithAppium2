@@ -138,7 +138,10 @@ public class Session {
                     executeRuntimeCommandTxtFile();
                     AppiumDriverLocalService serviceAndroid = getAppiumDriverDefaultLocalService();
                     serviceAndroid.start();
-                    this.androidDriver = new AndroidDriver(serviceAndroid, getConfiguratedMobileDesiredCapabilities());
+                    //this.androidDriver = new AndroidDriver(serviceAndroid, getConfiguratedMobileDesiredCapabilities());
+                    DesiredCapabilities desiredCapabilities = getConfiguratedMobileDesiredCapabilities();
+
+                    this.androidDriver = new AndroidDriver(serviceAndroid, desiredCapabilities);
                     this.appiumDriver = this.androidDriver;
                     break;
                 case IOS:
@@ -251,8 +254,10 @@ public class Session {
         /* TODO implement startGridSession */
     }
 
- private boolean isNotNullOrNoneValue(String string){
-     return !(string != null && !"none".equalsIgnoreCase(string));
+ private boolean isNotNullOrEmptyOrNoneValue(String string){
+        if(string == null)
+            return false;
+        return !(string.equalsIgnoreCase("none") && string.isEmpty());
  }
 
 
@@ -268,31 +273,31 @@ public class Session {
             String appPackage = customProperties.get("appPackage");
             String appActivity = customProperties.get("appActivity");
 
-            if (isNotNullOrNoneValue(platformName)){
+            if (isNotNullOrEmptyOrNoneValue(platformName)){
                 desiredCapabilities.setCapability("platformName", platformName);
             }
 
-            if (isNotNullOrNoneValue(platformName)){
+            if (isNotNullOrEmptyOrNoneValue(automationName)){
                 desiredCapabilities.setCapability("appium:automationName", automationName);
             }
 
-            if (isNotNullOrNoneValue(platformName)){
+            if (isNotNullOrEmptyOrNoneValue(platformVersion)){
                 desiredCapabilities.setCapability("appium:platformVersion", platformVersion);
             }
 
-            if (isNotNullOrNoneValue(platformName)){
+            if (isNotNullOrEmptyOrNoneValue(deviceName)){
                 desiredCapabilities.setCapability("appium:deviceName", deviceName);
             }
 
-            if (isNotNullOrNoneValue(platformName)){
+            if (isNotNullOrEmptyOrNoneValue(androidNoReset)){
                 desiredCapabilities.setCapability("appium:noReset", androidNoReset);
             }
 
-            if (isNotNullOrNoneValue(platformName)){
+            if (isNotNullOrEmptyOrNoneValue(appPackage)){
                 desiredCapabilities.setCapability("appium:appPackage", appPackage);
             }
 
-            if (isNotNullOrNoneValue(platformName)){
+            if (isNotNullOrEmptyOrNoneValue(appActivity)){
                 desiredCapabilities.setCapability("appium:appActivity", appActivity);
             }
 
@@ -347,6 +352,7 @@ public class Session {
             //FirefoxOptions firefoxOptions = getFireFoxOptions();
             //desiredCapabilities.setCapability(ChromeOptions.CAPABILITY, firefoxOptions);
         }
+        System.out.println("DesiredCapabilities: " + desiredCapabilities);
         return desiredCapabilities;
     }
 
