@@ -117,7 +117,7 @@ Reinicie o Terminal para obter as novas configurações .zprofile.
 **Caso não queira abrir e editar o arquivo manualmente, é possível adicionar as linhas ao arquivo conforme exemplo**:
  ```bash
 echo export "JAVA_HOME=\$(/usr/libexec/java_home -v 21)" >> ~/.zprofile
-echo export "PATH=\$PATH:\$JAVA_HOME/bin" >> ~/.bash_profile
+echo export "PATH=\$PATH:\$JAVA_HOME/bin" >> ~/.zprofile
 ```
 O **parâmetro -v** *em "/usr/libexec/java_home -v 21"* informa a versão específica de qual Java será utilizado, no caso a versão 21. Pode haver mais que uma versão do Java instalada na mesma máquina, assim sendo, é recomendado informar qual versão será utilizada.
 
@@ -161,7 +161,7 @@ npm install -g appium@2.11
 ```
 
 
-#### 4 - Appium Doctor - (opcional, porém altamente recomendado)
+#### 4 - Appium Doctor (opcional, porém altamente recomendado)
 Configurar o ambiente para Appium não é uma tarefa trivial, muitas coisas podem dar errado ou não estarem perfeitamente ajustadas. O Appium Doctor ajuda a encontrar e ajustar falhas no ambiente.
 
 ```bash
@@ -169,7 +169,7 @@ npm install @appium/doctor -g
 ```
 
 
-#### 4 - Verificar ambiente - (opcional, porém altamente recomendado)
+#### 5 - Verificar ambiente - (opcional, porém altamente recomendado)
 Utilize o Appium Doctor (instalado anteriormente) para certificar que o ambiente está pronto e conforme às expectativas e necessidades para a automação de testes utilizando Appium.  
 Execute o comando abaixo no Terminal para procurar falhas no ambiente.
 
@@ -179,7 +179,7 @@ No caso de falhas encontradas: será necessário ajustar aquela falha apontada e
 appium-doctor --dev
 ```
 
-#### 5 - Instalação e configuração do Android Studio
+#### 6 - Instalação e configuração do Android Studio
 Baixe o pacote de instalação no seguinte site:
 https://developer.android.com/studio/
 
@@ -244,11 +244,59 @@ appium-doctor --dev
 
 Estando a saída do Appium Doctor sem apontar erros, você acabou de configurar o ambiente.
 
-#### 6 - Instalação e configurações adicionais
-Baixe o pacote de instalação no seguinte site:
+#### 7 - Instalação do Maven
+Apache Maven é uma ferramenta de automação e gerenciamento de projetos, principalmente usada em projetos Java, ela ajuda a gerenciar dependências, compilar código, executar testes e empacotar aplicações.
 
-Appium inspector
+Abra um Terminal e digite:
+
+```bash
+brew install maven
+```
+
+#### 7 - Instalação do Ant
+Apache Ant é uma ferramenta de automação de compilação usada principalmente em projetos Java para compilar código, empacotar aplicações e executar testes.
+
+Abra um Terminal e digite:
+
+```bash
+brew install ant
+```
+
+#### 8 - Instalação Appium inspector (necessário apenas para ambiente de desenvolvimento)
+Appium Inspector é uma ferramenta GUI que permite inspecionar visualmente e interagir com os elementos da interface de usuário de aplicativos móveis e web durante testes automatizados, usada pelo desenvolvedor dos scripts de automação.
+
+**Baixe e instale o Appium Inspector através do seguinte site:**.  
 https://github.com/appium/appium-inspector/releases
+
+
+#### 9 - Instale e configure o Xcode e  Xcode command-line tools (apenas no MacOS, para testes em iOS)
+Xcode é um ambiente de desenvolvimento integrado (IDE) da Apple para criar aplicativos para iOS, macOS, watchOS e tvOS. Ele inclui ferramentas para escrever, compilar e depurar aplicativos de forma eficiente.
+Xcode inclui o simulador de iOS, que é crucial para testar aplicativos em diferentes versões do sistema operacional e dispositivos sem a necessidade de hardware físico.
+
+Baixe o Xcode:   
+https://developer.apple.com/xcode/
+
+Se precisar de uma versão específica busque em:  
+https://developer.apple.com/download/all/
+
+Execute o instalador e siga as instruções que você verá na tela.
+
+Para instalar as ferramentas de linha de comando do Xcode, execute o seguinte comando no Terminal:
+
+```bash
+xcode-select --install
+```
+
+
+
+**Baixe e instale o Appium Inspector através do seguinte site:**.  
+https://github.com/appium/appium-inspector/releases
+
+
+
+#### 10 - Instalação e configurações adicionais
+
+
 
 https://appium.io/docs/en/2.3/ecosystem/drivers/
 https://appium.io/docs/en/latest/guides/caps/
