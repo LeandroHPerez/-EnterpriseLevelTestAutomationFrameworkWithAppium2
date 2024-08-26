@@ -153,8 +153,7 @@ public class Session {
                     break;
             }
         } catch (Exception e) {
-            System.out.println(this.getClass().getEnclosingMethod().getDeclaringClass().getEnclosingMethod().getName()
-                    + "\n" + "Error: " + e);
+            System.out.println(this.getClass().getSimpleName() + "." +  new Object(){}.getClass().getEnclosingMethod().getName() + "()\n" + "Error: " + e);
         }
     }
 

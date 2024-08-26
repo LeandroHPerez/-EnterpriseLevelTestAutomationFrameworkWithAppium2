@@ -1,17 +1,17 @@
 
 # Framework genérico de automação de testes de software Enterprise
 
-Esse projeto visa facilitar a adoção e uso de um framework para automação de testes de software, fornecendo uma base inicial testada e pronta, que já consta com boa parte do código comum a todo framework necessário para a automação de testes.  
+Esse projeto visa facilitar a adoção e uso de um framework para automação de testes de software, fornecendo uma base inicial testada e pronta, que já consta com boa parte do código comum a todo framework necessário para a automação de testes.
 
-O Framework é desenvolvido tendo em mente os desafios dessa atividade em ambientes e softwares complexos.  
+O Framework é desenvolvido tendo em mente os desafios dessa atividade em ambientes e softwares complexos.
 
-O framework serve como um ponta pé inicial, podendo ser estudado, usado sem restrições, aprimorado e modificado para atender necessidades específicas de cada projeto.  
+O framework serve como um ponta pé inicial, podendo ser estudado, usado sem restrições, aprimorado e modificado para atender necessidades específicas de cada projeto.
 
 A linguagem utilizada é o **Java**, os cenários de teste podem ser escritos utilizando **Gherkin** com uso de Cucumber.  
 Podem ser escritos testes para:
-- Aplicativos nativos para **Android e iOS** utilizando *Appium*.  
+- Aplicativos nativos para **Android e iOS** utilizando *Appium*.
 - Aplicações **Web** com uso de *Selenium*. (Suporte futuro)
-- Testes de **serviços backend** são suportados com uso de *Rest-assured*. (Suporte futuro)  
+- Testes de **serviços backend** são suportados com uso de *Rest-assured*. (Suporte futuro)
 
 As ferramentas que apoiam o framework são gratuitas, têm código aberto e são vastamente utilizadas no mercado.  
 Consulte a licença de cada ferramenta utilizada para mais detalhes.
@@ -41,14 +41,14 @@ Para configurar o ambiente para construir e executar testes os seguintes passos 
 
 ### MacOS 10.5 ou mais novo:
 
-#### 1 - Instalar Homebrew  
+#### 1 - Instalar Homebrew
 Instale o **Homebrew** (um sistema de gerenciamento de pacotes que facilita a instalação de software em MacOS).  
 Encontre o Homebrew e siga as instruções de instalação neste site:  https://brew.sh
 
 Após a instalação do brew, será **necessário** instalar *Carthage*, um gerenciador de dependência, *Node.js* para termos acesso ao *NPM*.
-  
-  Obs.: Node.js é um componente essencial para executar o Appium. Appium é construído sobre Node.js, que é um ambiente de execução JavaScript.
-  Node.js vem com npm, um gerenciador de pacotes para JavaScript. O npm permite que você instale, gerencie e distribua facilmente bibliotecas e dependências JavaScript, incluindo o próprio pacote Appium.
+
+Obs.: Node.js é um componente essencial para executar o Appium. Appium é construído sobre Node.js, que é um ambiente de execução JavaScript.
+Node.js vem com npm, um gerenciador de pacotes para JavaScript. O npm permite que você instale, gerencie e distribua facilmente bibliotecas e dependências JavaScript, incluindo o próprio pacote Appium.
 
 Abra um Terminal e digite:
 
@@ -84,7 +84,7 @@ Se o arquivo .zprofile não existir, crie um via Terminal e após a criação é
 touch ~/.zprofile
 ```
 
- e adicione as duas linhas a seguir substituindo o valor variável *JAVA_HOME* pelo que foi copiado anteriormente:
+e adicione as duas linhas a seguir substituindo o valor variável *JAVA_HOME* pelo que foi copiado anteriormente:
  ```bash
 export JAVA_HOME="copied-path-to-JDK-directory"
 export PATH=$JAVA_HOME/bin:$PATH
@@ -117,9 +117,9 @@ Reinicie o Terminal para obter as novas configurações .zprofile.
 **Caso não queira abrir e editar o arquivo manualmente, é possível adicionar as linhas ao arquivo conforme exemplo**:
  ```bash
 echo export "JAVA_HOME=\$(/usr/libexec/java_home -v 21)" >> ~/.zprofile
-echo export "PATH=$JAVA_HOME/bin:$PATH" >> ~/.zprofile
+echo export "PATH=\$PATH:\$JAVA_HOME/bin" >> ~/.bash_profile
 ```
-O **parâmetro -v** *em "/usr/libexec/java_home -v 21"* informa a versão específica de qual Java será utilizado, no caso a versão 21. Pode haver mais que uma versão do Java instalada na mesma máquina, assim sendo, é recomendado informar qual versão será utilizada.  
+O **parâmetro -v** *em "/usr/libexec/java_home -v 21"* informa a versão específica de qual Java será utilizado, no caso a versão 21. Pode haver mais que uma versão do Java instalada na mesma máquina, assim sendo, é recomendado informar qual versão será utilizada.
 
 Abra um terminal e execute para aplicar as mudanças:
  ```bash
@@ -136,7 +136,7 @@ echo $PATH
 
 #### 3 - Instalar Appium:
 Você pode fazer isso de uma das seguintes maneiras:
-Instale o Appium Server. 
+Instale o Appium Server.
 
 Você pode baixar o instalador neste site (este método de instalação do Appium não é recomendado nem suportado):
 https://github.com/appium/appium/releases
@@ -171,7 +171,7 @@ npm install @appium/doctor -g
 
 #### 4 - Verificar ambiente - (opcional, porém altamente recomendado)
 Utilize o Appium Doctor (instalado anteriormente) para certificar que o ambiente está pronto e conforme às expectativas e necessidades para a automação de testes utilizando Appium.  
-Execute o comando abaixo no Terminal para procurar falhas no ambiente. 
+Execute o comando abaixo no Terminal para procurar falhas no ambiente.
 
 No caso de falhas encontradas: será necessário ajustar aquela falha apontada e rodar novamente o comando abaixo, até que toda a saída do Appium Doctor indique que não há problemas. Algumas etapas necessárias como a configuração do Android Studio serão feitas nas próximas seções.
 
@@ -217,6 +217,7 @@ Adicione as duas linhas a seguir substituindo o valor variável *ANDROID_HOME* p
  ```bash
 export ANDROID_HOME="copied-Android-SDK-location"
 export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
 ```
 Salve as alterações no arquivo .zprofile.
 Abra um terminal e execute para aplicar as mudanças:
@@ -231,6 +232,7 @@ Reinicie o Terminal para obter as novas configurações .zprofile.
  ```bash
 echo export "ANDROID_HOME=~/Library/Android/sdk" >> ~/.zprofile
 echo export "PATH=\$PATH:\$ANDROID_HOME/tools:\$ANDROID_HOME/tools/bin:\$ANDROID_HOME/platform-tools" >> ~/.zprofile
+echo export "PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/latest/bin" >> ~/.zprofile
 ```
 O **parâmetro ~** recupera o caminho da pasta do usuário.
 
@@ -274,11 +276,11 @@ Verifique a seção de Instalação e informações adicionais no arquivo README
 
 
 ## Referência
- - [jUnit](https://junit.org/junit5/)
- - [Cucumber](https://cucumber.io/)
- - [Appium](https://appium.io/)
- - [Selenium](https://www.selenium.dev/)
- - [Rest-assured](https://rest-assured.io/)
+- [jUnit](https://junit.org/junit5/)
+- [Cucumber](https://cucumber.io/)
+- [Appium](https://appium.io/)
+- [Selenium](https://www.selenium.dev/)
+- [Rest-assured](https://rest-assured.io/)
 
 
 ## Licença
